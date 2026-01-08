@@ -9,6 +9,8 @@ OLLAMA_MODEL = "gpt-oss:20b"
 TEMPERATURE = 1.0
 MAX_TOKENS = 2048
 
+KOKORO_VOICE = "af_nicole"
+
 # run on optimal device depending on gpu
 if torch.cuda.is_available():
     device = "cuda"
@@ -22,7 +24,9 @@ print(f"Using device: {device}")
 pipeline = KPipeline(lang_code='a', repo_id='hexgrad/Kokoro-82M')
 
 def generate_script(prompt):
-    response: ChatResponse = chat(model=OLLAMA_MODEL, messages=[
+    response: ChatResponse = chat(
+        model=OLLAMA_MODEL, 
+        messages=[
         {
             "role": "system",
             "content": """You are a meditation script generator. \
@@ -34,7 +38,12 @@ def generate_script(prompt):
             "role": "user",
             "content": prompt
         }
-    ])
+    ],
+    options=[
+        "temperature", TEMPERATURE,
+        "max_tokens", MAX_TOKENS
+    ]
+    )
     return response.message.content
 
 def generate_audio(script):
@@ -43,7 +52,7 @@ def generate_audio(script):
     audio_outputs = []
 
     for chunk in chunks:
-        generator = pipeline(chunk, voice="af_nicole")
+        generator = pipeline(chunk, voice=KOKORO_VOICE)
         for i, (gs, ps, audio) in enumerate(generator):
             print(i, gs, ps)
             audio_outputs.append(audio)
