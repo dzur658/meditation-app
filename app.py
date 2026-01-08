@@ -39,10 +39,10 @@ def generate_script(prompt):
             "content": prompt
         }
     ],
-    options=[
-        "temperature", TEMPERATURE,
-        "max_tokens", MAX_TOKENS
-    ]
+    options={
+        "temperature": TEMPERATURE,
+        "max_tokens": MAX_TOKENS
+    }
     )
     return response.message.content
 
